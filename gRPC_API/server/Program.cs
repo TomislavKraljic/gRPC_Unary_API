@@ -1,11 +1,12 @@
-﻿using Greet;
-using Grpc.Core;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Greet;
+using Grpc.Core;
+using static Greet.GreetingService;
 
 namespace server
 {
@@ -16,12 +17,23 @@ namespace server
         static void Main(string[] args)
         {
             Server server = null;
+
             try
             {
+                //var serverCert = File.ReadAllText("ssl/server.crt");
+                //var serverKey = File.ReadAllText("ssl/server.key");
+                //var keypair = new KeyCertificatePair(serverCert, serverKey);
+                //var cacert = File.ReadAllText("ssl/ca.crt");
+
+                //var credentials = new SslServerCredentials(new List<KeyCertificatePair>() { keypair }, cacert, true);
+
+
                 server = new Server()
                 {
-                    Services = {GreetingService.BindService(new GreetingServiceImpl())},
-                    Ports = { new ServerPort("localhost", Port, ServerCredentials.Insecure) }
+                    Services = {
+                        GreetingService.BindService(new GreetingServiceImpl()),
+                    },
+                    Ports = { new ServerPort("localhost", Port, ServerCredentials.Insecure) }// credentials) }
                 };
 
                 server.Start();
@@ -30,7 +42,7 @@ namespace server
             }
             catch (IOException e)
             {
-                Console.WriteLine("The server failed to start :" + e.Message); ;
+                Console.WriteLine("The server failed to start : " + e.Message);
                 throw;
             }
             finally

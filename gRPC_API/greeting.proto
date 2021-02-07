@@ -7,33 +7,48 @@ message Greeting {
 	string last_name = 2;
 }
 
+
+//Unary
 message GreetingRequest {
 	Greeting greeting = 1;
 }
-
+//Unary
 message GreetingResponse {
 	string result = 1;
 }
 
-
+//Server Streaming
 message GreetManyTimesRequest {
 	Greeting greeting = 1;
 }
 
+//Server Streaming
 message GreetManyTimesResponse {
 	string result = 1;
 }
 
+//Client Streaming
 message LongGreetRequest {
 	Greeting greeting = 1;
 }
 
+//Client Streaming
 message LongGreetResponse {
 	string result = 1;
 }
 
+//Bidirectional Streaming
+message GreetEveryoneRequest {
+	Greeting greeting = 1;
+}
+
+//Bidirectional Streaming
+message GreetEveryoneResponse {
+	string result = 1;
+}
+
 service GreetingService {
-    // Unary
+	// Unary
 	rpc Greet (GreetingRequest) returns (GreetingResponse) {}
 
 	// Server Streaming
@@ -41,4 +56,8 @@ service GreetingService {
 
 	// Client Streaming
 	rpc LongGreet (stream LongGreetRequest) returns (LongGreetResponse) {}
+
+	// Bidirectional Streaming
+	rpc GreetEveryone (stream GreetEveryoneRequest) returns (stream GreetEveryoneResponse) {};
+
 }
