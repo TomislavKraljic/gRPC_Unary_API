@@ -30,20 +30,39 @@ namespace client
                 LastName = "Kraljic"
             };
 
+            // Unary
             //var request = new GreetingRequest() { Greeting = greeting };
 
             //var response = client.Greet(request);
 
-            var request = new GreetManyTimesRequest() { Greeting = greeting };
-            var response = client.greetManyTimes(request);
+
+            // Server Streaming
+            //var request = new GreetManyTimesRequest() { Greeting = greeting };
+            //var response = client.greetManyTimes(request);
+
+            //while ( await response.ResponseStream.MoveNext())
+            //{
+            //    Console.WriteLine(response.ResponseStream.Current.Result);
+            //    await Task.Delay(300);
+            //}
 
             //Console.WriteLine(response.Result);
 
-            while ( await response.ResponseStream.MoveNext())
+
+            //  Client Streaming
+            var request = new LongGreetRequest() { Greeting = greeting };
+            var stream = client.LongGreet();
+
+            foreach(int i in Enumerable.Range(1, 10))
             {
-                Console.WriteLine(response.ResponseStream.Current.Result);
-                await Task.Delay(300);
+                await stream.RequestStream.WriteAsync(request);
             }
+
+            await stream.RequestStream.CompleteAsync();
+
+            var response = await stream.ResponseAsync;
+
+            Console.WriteLine(response.Result); ;
 
             channel.ShutdownAsync().Wait();
 
