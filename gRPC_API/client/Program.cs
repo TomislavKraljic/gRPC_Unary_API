@@ -12,11 +12,11 @@ namespace client
     class Program
     {
         const string target = "127.0.0.1:50051";
-        static void Main(string[] args)
+        static async Task Main(string[] args)
         {
             Channel channel = new Channel(target, ChannelCredentials.Insecure);
 
-            channel.ConnectAsync().ContinueWith((task) =>
+            await channel.ConnectAsync().ContinueWith((task) =>
             {
                 if (task.Status == TaskStatus.RanToCompletion)
                     Console.WriteLine("The client connected successfully");
@@ -30,11 +30,20 @@ namespace client
                 LastName = "Kraljic"
             };
 
-            var request = new GreetingRequest() { Greeting = greeting };
+            //var request = new GreetingRequest() { Greeting = greeting };
 
-            var response = client.Greet(request);
+            //var response = client.Greet(request);
 
-            Console.WriteLine(response.Result);
+            var request = new GreetManyTimesRequest() { Greeting = greeting };
+            var response = client.greetManyTimes(request);
+
+            //Console.WriteLine(response.Result);
+
+            while ( await response.ResponseStream.MoveNext())
+            {
+                Console.WriteLine(response.ResponseStream.Current.Result);
+                await Task.Delay(300);
+            }
 
             channel.ShutdownAsync().Wait();
 
